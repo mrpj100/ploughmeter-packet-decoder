@@ -113,12 +113,12 @@ def convert_keller_pressure (raw_pressure):
     # converts Keller digital values to real pressures in bar
     bar_pressure = 0.0
 
-    keller_max_bar = 250 # 100 bar for demo kit sensor - 250 bar for real sensor
+    keller_max_bar = 100 # 100 bar for demo kit sensor - 250 bar for real sensor
     keller_min_bar = 0 # 0 bar for our sensor - it doesn't go down to vacuum
 
     pressure_range = keller_max_bar - keller_min_bar
 
-    bar_pressure = ((raw_pressure - 16384) * (pressure_range / 32768)) + keller_min_bar
+    bar_pressure = ((raw_pressure - 16384) * (pressure_range / 32768)) + keller_min_bar + 1 #note that we add +1 at the end to give absolute pressure - this is a Sealed Gauge sensor, so it's absolute but reads 0 at 1 bar
 
     return bar_pressure
 
