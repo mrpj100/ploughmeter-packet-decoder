@@ -107,6 +107,7 @@ def decode_ploughmeter_data(ploughmeter_data):
     data_dict['Raw-LoadCell-Ch1'] = int.from_bytes(ploughmeter_data[22:25], byteorder= 'big', signed=True)
     data_dict['Raw-LoadCell-Ch2'] = int.from_bytes(ploughmeter_data[25:28], byteorder= 'big', signed=True)
     data_dict['Raw-Batt-mV'] = int.from_bytes(ploughmeter_data[28:30], byteorder='big', signed=False)
+    data_dict['Raw-Seq'] = int.from_bytes(ploughmeter_data[30:31], byteorder='big', signed=False)
 
     return data_dict
 
@@ -201,9 +202,9 @@ log_file_name = datetime.datetime.strftime(datetime.datetime.utcnow(), '%Y-%m-%d
 
 log_file = open(log_file_name, "w")
 
-log_file.write("Timestamp, UID, RSSI, RawTemperature, RawIMU_M_X, RawIMU_M_Y, RawIMU_M_Z, RawTIL_A_X, RawTIL_A_Y, RawTIL_A_Z, RawTIL_T_X, RawTIL_T_Y, RawCOND, RawPRESSURE, LoadCellCh1, LoadCellCh2, BattMilliVolts")
+log_file.write("Timestamp, UID, Seq, RSSI, RawTemperature, RawIMU_M_X, RawIMU_M_Y, RawIMU_M_Z, RawTIL_A_X, RawTIL_A_Y, RawTIL_A_Z, RawTIL_T_X, RawTIL_T_Y, RawCOND, RawPRESSURE, LoadCellCh1, LoadCellCh2, BattMilliVolts")
 log_file.write("\n")
-print("Timestamp,              UID       RSSI       Temp         IMU_M_X    IMU_M_Y    IMU_M_Z   TIL_A_X   TIL_A_Y   TIL_A_Z   TIL_T_X  TIL_T_Y  COND PRESSURE     LoadCellCh1 LoadCellCh2 BattMilliVolts")
+print("Timestamp,              UID      Seq   RSSI       Temp         IMU_M_X    IMU_M_Y    IMU_M_Z   TIL_A_X   TIL_A_Y   TIL_A_Z   TIL_T_X  TIL_T_Y  COND PRESSURE     LoadCellCh1 LoadCellCh2 BattMilliVolts")
 
 try:
     while True:
@@ -295,9 +296,9 @@ try:
         #print("Keller temperature = "+repr(keller_temperature_reading))
 
 
-        print(packet_rx_time.isoformat(timespec='milliseconds'),'{0:x}'.format(separated_packet['U-Field']), ' {}'.format(separated_packet['RSSI']), 'dBm ', '{:+06.3f}'.format(TMP117_temperature_decode), "degC",  '{:+06.3f}'.format(IMU_magX_decode), "μT", '{:+06.3f}'.format(IMU_magY_decode), "μT", '{:+06.3f}'.format(IMU_magZ_decode), "μT", '{:+06.3f}'.format(TILT_accelX_decode), "mg", '{:+06.3f}'.format(TILT_accelY_decode), "mg", '{:+06.3f}'.format(TILT_accelZ_decode), "mg", '{:+06.3f}'.format(TILT_pitchX_decode), "°", '{:+06.3f}'.format(TILT_rollY_decode), "°", '{}'.format(ploughmeter_data['Raw-Conductivity']),'{:+06.3f}'.format(PRESSURE_decode), "bar", '{}'.format(ploughmeter_data['Raw-LoadCell-Ch1']),'{}'.format(ploughmeter_data['Raw-LoadCell-Ch2']), '{}'.format(ploughmeter_data['Raw-Batt-mV']), sep=" ")
+        print(packet_rx_time.isoformat(timespec='milliseconds'),'{0:x}'.format(separated_packet['U-Field']),'{:03d}'.format(ploughmeter_data['Raw-Seq']), ' {}'.format(separated_packet['RSSI']), 'dBm ', '{:+06.3f}'.format(TMP117_temperature_decode), "degC",  '{:+06.3f}'.format(IMU_magX_decode), "μT", '{:+06.3f}'.format(IMU_magY_decode), "μT", '{:+06.3f}'.format(IMU_magZ_decode), "μT", '{:+06.3f}'.format(TILT_accelX_decode), "mg", '{:+06.3f}'.format(TILT_accelY_decode), "mg", '{:+06.3f}'.format(TILT_accelZ_decode), "mg", '{:+06.3f}'.format(TILT_pitchX_decode), "°", '{:+06.3f}'.format(TILT_rollY_decode), "°", '{}'.format(ploughmeter_data['Raw-Conductivity']),'{:+06.3f}'.format(PRESSURE_decode), "bar", '{}'.format(ploughmeter_data['Raw-LoadCell-Ch1']),'{}'.format(ploughmeter_data['Raw-LoadCell-Ch2']), '{}'.format(ploughmeter_data['Raw-Batt-mV']), sep=" ")
 
-        data_string = '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(packet_rx_time.isoformat(timespec='milliseconds'), separated_packet['U-Field'], separated_packet['RSSI'], ploughmeter_data['Raw-Temperature'],  ploughmeter_data['Raw-IMU_MAG_X'], ploughmeter_data['Raw-IMU_MAG_Y'], ploughmeter_data['Raw-IMU_MAG_Z'], ploughmeter_data['Raw-TILT_ACC_X'], ploughmeter_data['Raw-TILT_ACC_Y'], ploughmeter_data['Raw-TILT_ACC_Z'], ploughmeter_data['Raw-TILT_PITCH_X'], ploughmeter_data['Raw-TILT_ROLL_Y'], ploughmeter_data['Raw-Conductivity'], ploughmeter_data['Raw-Pressure'], ploughmeter_data['Raw-LoadCell-Ch1'], ploughmeter_data['Raw-LoadCell-Ch2'], ploughmeter_data['Raw-Batt-mV'])
+        data_string = '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(packet_rx_time.isoformat(timespec='milliseconds'), separated_packet['U-Field'],ploughmeter_data['Raw-Seq'], separated_packet['RSSI'], ploughmeter_data['Raw-Temperature'],  ploughmeter_data['Raw-IMU_MAG_X'], ploughmeter_data['Raw-IMU_MAG_Y'], ploughmeter_data['Raw-IMU_MAG_Z'], ploughmeter_data['Raw-TILT_ACC_X'], ploughmeter_data['Raw-TILT_ACC_Y'], ploughmeter_data['Raw-TILT_ACC_Z'], ploughmeter_data['Raw-TILT_PITCH_X'], ploughmeter_data['Raw-TILT_ROLL_Y'], ploughmeter_data['Raw-Conductivity'], ploughmeter_data['Raw-Pressure'], ploughmeter_data['Raw-LoadCell-Ch1'], ploughmeter_data['Raw-LoadCell-Ch2'], ploughmeter_data['Raw-Batt-mV'])
 
 
         ##print(packet_rx_time.isoformat(timespec='milliseconds'),'{0:x}'.format(separated_packet['U-Field']), ' {}'.format(separated_packet['RSSI']), 'dBm ', '{}'.format(cryoegg_data['Raw-Conductivity']),  '{:+06.3f}'.format(pressure_reading), "bar", '{:+06.3f}'.format(pt1000_temperature_reading), "degC", '{:+06.3f}'.format(keller_temperature_reading), "degC", sep=" ")
